@@ -10,27 +10,41 @@ import android.util.Log;
 
 import static android.content.Context.CONNECTIVITY_SERVICE;
 
+/**
+ * kelas ini digunakan untuk Broadcast info koneksi ke jaringan
+ */
 public class ConnectivityReceiver extends BroadcastReceiver {
+    //konstanta yang akan digunakan
     public static final String NETWORK_AVAILABLE_ACTION = "com.ajit.singh.NetworkAvailable";
     public static final String IS_NETWORK_AVAILABLE = "isNetworkAvailable";
 
+    //method ini digunakan untuk menerima intent broadcast
     @Override
     public void onReceive(Context context, Intent intent) {
+        //intent
         Intent networkStateIntent = new Intent(NETWORK_AVAILABLE_ACTION);
+        //nilai konstantanta NETWORK_AVAILABLE_ACTION dikirim ke konteks agar activity dapat megakses kelas ini
         networkStateIntent.putExtra(IS_NETWORK_AVAILABLE, isConnectedToInternet(context));
+        //Fungsi ini digunakan untuk mengirimkan ke objek lokal dalam proses braodcast
         LocalBroadcastManager.getInstance(context).sendBroadcast(networkStateIntent);
     }
 
+    //method isConnectedToInternet
     private boolean isConnectedToInternet(Context context) {
+        //menggunakan try catch karena potensi null pointer exception
         try {
+            //jika konteks tidak sama dengan null
             if (context != null) {
+                //panggil fungsi Conectivity Manager fugsinya membaca koneksi
                 ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(CONNECTIVITY_SERVICE);
+                //disini bisa tahu maa koneksi internet yang aktif
                 NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
                 return networkInfo != null && networkInfo.isConnected();
             }
             return false;
 
         } catch (Exception e) {
+            //jika tidak bisa beri pesan error disistem
             Log.e(ConnectivityReceiver.class.getName(), e.getMessage());
             return false;
         }
